@@ -1,0 +1,15 @@
+name: 'xUnit XML to Slack'
+description: 'Send xUnit-like xml report to Slack'
+branding:
+    icon: "bell"
+    color: "green"
+inputs:
+  slack-webhook-url: 
+    description: 'Webhook URL for Slack'
+    required: true
+  directory-path:
+    description: 'Directory path to JUnit XML file'
+    required: true
+runs:
+  using: 'node16'
+  main: 'dist/index.js'

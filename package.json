@@ -1,0 +1,34 @@
+{
+  "name": "xunit-xml-slack-action",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Qafana/xunit-xml-slack-action.git"
+  },
+  "keywords": [],
+  "author": "qafana.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Qafana/xunit-xml-slack-action/issues"
+  },
+  "homepage": "https://github.com/Qafana/xunit-xml-slack-action#readme",
+  "dependencies": {
+    "@actions/core": "^1.9.0",
+    "@actions/github": "^5.0.3",
+    "@slack/webhook": "^6.1.0",
+    "junit2json": "^3.0.2",
+    "dotenv": "^16.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "typescript": "^4.7.4",
+    "@vercel/ncc": "^0.34.0"
+  }
+}
