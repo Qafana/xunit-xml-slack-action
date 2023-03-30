@@ -1,5 +1,5 @@
 //@ts-check
-import { IncomingWebhook } from '@slack/webhook';
+import {IncomingWebhook} from '@slack/webhook';
 import ActionInfo from './action-info';
 import ResultsParser from './results-parser';
 
@@ -13,6 +13,12 @@ export default class SlackMessage {
     const webhook = new IncomingWebhook(slackWebhookUrl);
     const blocks = this.getBlocks(this.testResults, actionInfo);
     await webhook.send({ text: `${actionInfo.workflowName} - ${this.testResults.failedTests > 0 ? "Failed": "Passed"}`, blocks: JSON.parse(blocks) });
+  }
+
+  async sendUnknownResult(slackWebhookUrl: string, actionInfo: ActionInfo): Promise<void> {
+    const webhook = new IncomingWebhook(slackWebhookUrl);
+    const blocks = this.getUnknownBlocks(actionInfo);
+    await webhook.send({ text: `${actionInfo.workflowName} - "Unknown result"}`, blocks: JSON.parse(blocks) });
   }
 
   private getFailedTestsSections(failed, failedTestsList: string[]): string {
@@ -54,7 +60,7 @@ export default class SlackMessage {
     const failed = failedTests > 0;
     const failedTestsSections = this.getFailedTestsSections(failed, failedTestsList);
     const overralTestsSection = this.getOverralTestsSection(passedTests, skippedTests, failedTests);
-  const nesta = `
+    return `
   [
     {
         "type": "context",
@@ -100,7 +106,50 @@ export default class SlackMessage {
         ]
     }
 ]
-  `
-  return nesta;
+  `;
     }
+
+  getUnknownBlocks(actionInfo: ActionInfo): string {
+    return `
+  [
+    {
+        "type": "context",
+        "elements": [
+            {
+                "type": "plain_text",
+                "text": "Action: ${actionInfo.workflowName}",
+                "emoji": true
+            }
+        ]
+    },
+    {
+        "type": "divider"
+    },
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": ":Question: *UNKNOWN RESULT:* No test result was found, check the Action for more info."
+        }
+    {
+        "type": "divider"
+    },
+    {
+        "type": "actions",
+        "elements": [
+            {
+                "type": "button",
+                "text": {
+                    "type": "plain_text",
+                    "text": "Go to Action",
+                    "emoji": true
+                },
+                "value": "action_go",
+                "url": "${actionInfo.runUrl}"
+            }
+        ]
+    }
+]
+  `;
+  }
+
 }

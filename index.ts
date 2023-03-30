@@ -11,6 +11,10 @@ let testOutputFile = core.getInput("directory-path") ? core.getInput("directory-
 (async () => {
   const workspacePath = process.env.GITHUB_WORKSPACE;
   const result = new ResultsParser(workspacePath + '/' + testOutputFile);
-  await result.parse();
-  await new SlackMessage(result).send(slackWebhookUrl, new ActionInfo());
+  try {
+    await result.parse();
+    await new SlackMessage(result).send(slackWebhookUrl, new ActionInfo());
+  } catch (e) {
+    await new SlackMessage(result).sendUnknownResult(slackWebhookUrl, new ActionInfo());
+  }
 })();

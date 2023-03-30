@@ -1,0 +1,161 @@
+<testsuites id="" name="" tests="8" failures="1" skipped="1" errors="0" time="195.091">
+<testsuite name="cloud/test-4f.spec.ts" timestamp="1655667311825" hostname="" tests="1" failures="1" skipped="0" time="57.449" errors="0">
+<testcase name="4 factors dashboard Check 4 factors @dashboard on @cloud" classname="[staging] › cloud/test-4f.spec.ts:11:5 › 4 factors dashboard › Check 4 factors @dashboard on @cloud" time="57.449">
+<failure message="test-4f.spec.ts:11:5 Check 4 factors @dashboard on @cloud" type="FAILURE">
+  [staging] › cloud/test-4f.spec.ts:11:5 › 4 factors dashboard › Check 4 factors @dashboard on @cloud 
+
+    Error: expect(received).toBeVisible()
+    Call log:
+      - expect.toBeVisible with timeout 5000ms
+      - waiting for selector "[data-automation-id='hotspot-code-health-div']"
+
+
+      15 |       const analysisResultsPage = await projectsPage.clickOnProjectTitle(projectName);
+      16 |       let newDashboardPage = await analysisResultsPage.load4f();
+    > 17 |       await newDashboardPage.verifyVisibilityOfHotspotCodeHealth();
+         |                              ^
+      18 |       let hotspotsPage = await newDashboardPage.clickOnViewHotspotsLink();
+      19 |       await hotspotsPage.verifyHotspotsTab();
+      20 |       await page.goBack();
+
+        at CodeHealthPage.verifyVisibilityOfHotspotCodeHealth (/Users/emir/Codebase/codescene/testing/ui-tests-playwright/pages/common-pages/analysis-results-pages/new-dashboard-page/code-health-page.ts:57:60)
+        at /Users/emir/Codebase/codescene/testing/ui-tests-playwright/tests/cloud/test-4f.spec.ts:17:30
+
+    Error: expect(received).toBeVisible()
+    Call log:
+      - expect.toBeVisible with timeout 5000ms
+      - waiting for selector "[data-automation-id='view-hotspots-in-hotspot-code-health']"
+
+
+      15 |       const analysisResultsPage = await projectsPage.clickOnProjectTitle(projectName);
+      16 |       let newDashboardPage = await analysisResultsPage.load4f();
+    > 17 |       await newDashboardPage.verifyVisibilityOfHotspotCodeHealth();
+         |       ^
+      18 |       let hotspotsPage = await newDashboardPage.clickOnViewHotspotsLink();
+      19 |       await hotspotsPage.verifyHotspotsTab();
+      20 |       await page.goBack();
+
+        at CodeHealthPage.verifyVisibilityOfHotspotCodeHealth (/Users/emir/Codebase/codescene/testing/ui-tests-playwright/pages/common-pages/analysis-results-pages/new-dashboard-page/code-health-page.ts:58:50)
+        at /Users/emir/Codebase/codescene/testing/ui-tests-playwright/tests/cloud/test-4f.spec.ts:17:7
+
+    locator.click: Timeout 20000ms exceeded.
+    =========================== logs ===========================
+    waiting for selector "[data-automation-id='view-hotspots-in-hotspot-code-health']"
+    ============================================================
+
+      16 |       let newDashboardPage = await analysisResultsPage.load4f();
+      17 |       await newDashboardPage.verifyVisibilityOfHotspotCodeHealth();
+    > 18 |       let hotspotsPage = await newDashboardPage.clickOnViewHotspotsLink();
+         |                                                 ^
+      19 |       await hotspotsPage.verifyHotspotsTab();
+      20 |       await page.goBack();
+      21 |       await newDashboardPage.verifyVisibilityOfAverageCodeHealth();
+
+        at CodeHealthPage.clickOnViewHotspotsLink (/Users/emir/Codebase/codescene/testing/ui-tests-playwright/pages/common-pages/analysis-results-pages/new-dashboard-page/code-health-page.ts:89:37)
+        at /Users/emir/Codebase/codescene/testing/ui-tests-playwright/tests/cloud/test-4f.spec.ts:18:49
+
+    attachment #1: video (video/webm) --------------------------------------------------------------
+    test-results/cloud-test-4f-4-factors-dashboard-Check-4-factors-dashboard-on-cloud-staging/video.webm
+    ------------------------------------------------------------------------------------------------
+
+    attachment #2: trace (application/zip) ---------------------------------------------------------
+    test-results/cloud-test-4f-4-factors-dashboard-Check-4-factors-dashboard-on-cloud-staging/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/cloud-test-4f-4-factors-dashboard-Check-4-factors-dashboard-on-cloud-staging/trace.zip
+
+    ------------------------------------------------------------------------------------------------
+
+    attachment #3: screenshot (image/png) ----------------------------------------------------------
+    test-results/cloud-test-4f-4-factors-dashboard-Check-4-factors-dashboard-on-cloud-staging/test-failed-1.png
+    ------------------------------------------------------------------------------------------------
+
+</failure>
+<system-out>
+
+[[ATTACHMENT|../test-results/cloud-test-4f-4-factors-dashboard-Check-4-factors-dashboard-on-cloud-staging/video.webm]]
+
+[[ATTACHMENT|../test-results/cloud-test-4f-4-factors-dashboard-Check-4-factors-dashboard-on-cloud-staging/trace.zip]]
+
+[[ATTACHMENT|../test-results/cloud-test-4f-4-factors-dashboard-Check-4-factors-dashboard-on-cloud-staging/test-failed-1.png]]
+
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="cloud/test-login.spec.ts" timestamp="1655667311825" hostname="" tests="3" failures="0" skipped="0" time="104.71" errors="0">
+<testcase name="Login feature Login with github on @cloud" classname="[staging] › cloud/test-login.spec.ts:10:5 › Login feature › Login with github on @cloud" time="34.088">
+<system-out>
+
+[[ATTACHMENT|../test-results/cloud-test-login-Login-feature-Login-with-github-on-cloud-staging/video.webm]]
+
+[[ATTACHMENT|../test-results/cloud-test-login-Login-feature-Login-with-github-on-cloud-staging/trace.zip]]
+
+[[ATTACHMENT|../test-results/cloud-test-login-Login-feature-Login-with-github-on-cloud-staging/test-finished-1.png]]
+
+</system-out>
+</testcase>
+<testcase name="Login feature Login with bitbucket on @cloud" classname="[staging] › cloud/test-login.spec.ts:10:5 › Login feature › Login with bitbucket on @cloud" time="33.26">
+<system-out>
+
+[[ATTACHMENT|../test-results/cloud-test-login-Login-feature-Login-with-bitbucket-on-cloud-staging/video.webm]]
+
+[[ATTACHMENT|../test-results/cloud-test-login-Login-feature-Login-with-bitbucket-on-cloud-staging/trace.zip]]
+
+[[ATTACHMENT|../test-results/cloud-test-login-Login-feature-Login-with-bitbucket-on-cloud-staging/test-finished-1.png]]
+
+</system-out>
+</testcase>
+<testcase name="Login feature Login with azure on @cloud" classname="[staging] › cloud/test-login.spec.ts:10:5 › Login feature › Login with azure on @cloud" time="37.362">
+<system-out>
+
+[[ATTACHMENT|../test-results/cloud-test-login-Login-feature-Login-with-azure-on-cloud-staging/video.webm]]
+
+[[ATTACHMENT|../test-results/cloud-test-login-Login-feature-Login-with-azure-on-cloud-staging/trace.zip]]
+
+[[ATTACHMENT|../test-results/cloud-test-login-Login-feature-Login-with-azure-on-cloud-staging/test-finished-1.png]]
+
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="cloud/test-pr-integration.spec.ts" timestamp="1655667311825" hostname="" tests="3" failures="0" skipped="0" time="500.244" errors="0">
+<testcase name="PR integration feature Test PR integration with github on @cloud @prIntegration" classname="[staging] › cloud/test-pr-integration.spec.ts:13:5 › PR integration feature › Test PR integration with github on @cloud @prIntegration" time="148.814">
+<system-out>
+
+[[ATTACHMENT|../test-results/cloud-test-pr-integration-PR-integration-featu-eff46--integration-with-github-on-cloud-prIntegration-staging/video.webm]]
+
+[[ATTACHMENT|../test-results/cloud-test-pr-integration-PR-integration-featu-eff46--integration-with-github-on-cloud-prIntegration-staging/trace.zip]]
+
+[[ATTACHMENT|../test-results/cloud-test-pr-integration-PR-integration-featu-eff46--integration-with-github-on-cloud-prIntegration-staging/test-finished-1.png]]
+
+</system-out>
+</testcase>
+<testcase name="PR integration feature Test PR integration with bitbucket on @cloud @prIntegration" classname="[staging] › cloud/test-pr-integration.spec.ts:13:5 › PR integration feature › Test PR integration with bitbucket on @cloud @prIntegration" time="156.852">
+<system-out>
+
+[[ATTACHMENT|../test-results/cloud-test-pr-integration-PR-integration-featu-31950-tegration-with-bitbucket-on-cloud-prIntegration-staging/video.webm]]
+
+[[ATTACHMENT|../test-results/cloud-test-pr-integration-PR-integration-featu-31950-tegration-with-bitbucket-on-cloud-prIntegration-staging/trace.zip]]
+
+[[ATTACHMENT|../test-results/cloud-test-pr-integration-PR-integration-featu-31950-tegration-with-bitbucket-on-cloud-prIntegration-staging/test-finished-1.png]]
+
+</system-out>
+</testcase>
+<testcase name="PR integration feature Test PR integration with azure on @cloud @prIntegration" classname="[staging] › cloud/test-pr-integration.spec.ts:13:5 › PR integration feature › Test PR integration with azure on @cloud @prIntegration" time="194.578">
+<system-out>
+
+[[ATTACHMENT|../test-results/cloud-test-pr-integration-PR-integration-featu-1ac6b-R-integration-with-azure-on-cloud-prIntegration-staging/video.webm]]
+
+[[ATTACHMENT|../test-results/cloud-test-pr-integration-PR-integration-featu-1ac6b-R-integration-with-azure-on-cloud-prIntegration-staging/trace.zip]]
+
+[[ATTACHMENT|../test-results/cloud-test-pr-integration-PR-integration-featu-1ac6b-R-integration-with-azure-on-cloud-prIntegration-staging/test-finished-1.png]]
+
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="cloud/test-project-architecture.spec.ts" timestamp="1655667311825" hostname="" tests="1" failures="0" skipped="1" time="0" errors="0">
+<testcase name="Architectural components Generate architectural components on @cloud" classname="[staging] › cloud/test-project-architecture.spec.ts:15:8 › Architectural components › Generate architectural components on @cloud" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+</testsuites>
