@@ -20230,11 +20230,13 @@ class SlackMessage {
     {
         "type": "divider"
     },
+    {
         "type": "section",
         "text": {
             "type": "mrkdwn",
             "text": ":Question: *UNKNOWN RESULT:* No test result was found, check the Action for more info."
         }
+    },
     {
         "type": "divider"
     },
