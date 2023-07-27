@@ -20044,10 +20044,25 @@ var main = __nccwpck_require__(2437);
 var main_default = /*#__PURE__*/__nccwpck_require__.n(main);
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(2186);
+// EXTERNAL MODULE: ./node_modules/@slack/webhook/dist/index.js
+var dist = __nccwpck_require__(1095);
+// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
+var github = __nccwpck_require__(5438);
+;// CONCATENATED MODULE: ./app/action-info.ts
+
+class ActionInfo {
+    constructor() {
+        this.workflowName = github.context.workflow;
+        this.stepId = github.context.action;
+        this.runUrl = `${github.context.serverUrl}/${github.context.repo.owner}/${github.context.repo.repo}/actions/runs/${github.context.runId}`;
+        this.buildUrl = `${github.context.serverUrl}/${github.context.repo.owner}/${github.context.repo.repo}/runs/${github.context.runNumber}`;
+    }
+}
+
 // EXTERNAL MODULE: external "fs"
 var external_fs_ = __nccwpck_require__(7147);
 // EXTERNAL MODULE: ./node_modules/junit2json/dist/index.js
-var dist = __nccwpck_require__(8027);
+var junit2json_dist = __nccwpck_require__(8027);
 ;// CONCATENATED MODULE: ./app/results-parser.ts
 
 
@@ -20069,7 +20084,7 @@ class ResultsParser {
     }
     async parse() {
         const file = external_fs_.readFileSync(this.filePath, 'utf8');
-        const output = await (0,dist.parse)(file);
+        const output = await (0,junit2json_dist.parse)(file);
         const timeSeconds = Math.floor(output["time"]);
         this.executionTime = Math.floor(timeSeconds / 60) + "m " + timeSeconds % 60 + "s";
         const testResults = this.extract(output["testsuite"]);
@@ -20111,69 +20126,58 @@ class ResultsParser {
     }
 }
 
-// EXTERNAL MODULE: ./node_modules/@slack/webhook/dist/index.js
-var webhook_dist = __nccwpck_require__(1095);
-;// CONCATENATED MODULE: ./app/slack-message.ts
-//@ts-check
-
-class SlackMessage {
-    constructor(testResults) {
-        this.testResults = testResults;
-    }
-    async send(slackWebhookUrl, actionInfo) {
-        const webhook = new webhook_dist/* IncomingWebhook */.QU(slackWebhookUrl);
-        const blocks = this.getBlocks(this.testResults, actionInfo);
-        await webhook.send({ text: `${actionInfo.workflowName} - ${this.testResults.failedTests > 0 ? "Failed" : "Passed"}`, blocks: JSON.parse(blocks) });
-    }
-    async sendUnknownResult(slackWebhookUrl, actionInfo) {
-        const webhook = new webhook_dist/* IncomingWebhook */.QU(slackWebhookUrl);
-        const blocks = this.getUnknownBlocks(actionInfo);
-        await webhook.send({ text: `${actionInfo.workflowName} - "Unknown result"}`, blocks: JSON.parse(blocks) });
-    }
-    getFailedTestsSections(failed, failedTestsList) {
-        const template = (testName, isFailed) => `{
+;// CONCATENATED MODULE: ./app/slack-message-with-results.ts
+function withResultSlackMessage(actionInfo, testResults) {
+    const resultBlocks = getBlocks(testResults, actionInfo);
+    return {
+        text: `${actionInfo.workflowName} - ${testResults.failedTests > 0 ? "Failed" : "Passed"}`,
+        blocks: JSON.parse(resultBlocks)
+    };
+}
+function getFailedTestsSections(failed, failedTestsList) {
+    const template = (testName, isFailed) => `{
         "type": "section",
         "text": {
             "type": "mrkdwn",
             "text": "${isFailed ? ":red_circle: " + testName : ":tada: *ALL PASSED*"} "
         }
     },`;
-        if (!failed) {
-            return template("", false);
-        }
-        else {
-            return failedTestsList.map(testName => template(testName, true)).join("\n");
-        }
+    if (!failed) {
+        return template("", false);
     }
-    getOverralTestsSection(passedTests, skippedTests, failedTests) {
-        const passedSubstring = passedTests > 0 ? `:large_green_circle: *PASSED: ${passedTests}*` : "";
-        const failedSubstring = failedTests > 0 ? `:red_circle: *FAILED: ${failedTests}*` : "";
-        const skippedSubstring = skippedTests > 0 ? `:white_circle: *SKIPPED: ${skippedTests}*` : "";
-        const template = (passedTests, skippedTests, failedTests) => `{
+    else {
+        return failedTestsList.map(testName => template(testName, true)).join("\n");
+    }
+}
+function getOverralTestsSection(passedTests, skippedTests, failedTests) {
+    const passedSubstring = passedTests > 0 ? `:large_green_circle: *PASSED: ${passedTests}*` : "";
+    const failedSubstring = failedTests > 0 ? `:red_circle: *FAILED: ${failedTests}*` : "";
+    const skippedSubstring = skippedTests > 0 ? `:white_circle: *SKIPPED: ${skippedTests}*` : "";
+    const template = (passedTests, skippedTests, failedTests) => `{
         "type": "section",
         "text": {
             "type": "mrkdwn",
             "text": "${passedSubstring} ${failedSubstring} ${skippedSubstring}"
         }
     },`;
-        return template(passedTests, skippedTests, failedTests);
-    }
-    getBlocks(testResults, actionInfo) {
-        const failedTests = testResults.failedTests;
-        const skippedTests = testResults.skippedTests;
-        const passedTests = testResults.passedTests;
-        const failedTestsList = testResults.failedTestsList;
-        const failed = failedTests > 0;
-        const failedTestsSections = this.getFailedTestsSections(failed, failedTestsList);
-        const overralTestsSection = this.getOverralTestsSection(passedTests, skippedTests, failedTests);
-        return `
+    return template(passedTests, skippedTests, failedTests);
+}
+function getBlocks(testResults, actionInfo) {
+    const failedTests = testResults.failedTests;
+    const skippedTests = testResults.skippedTests;
+    const passedTests = testResults.passedTests;
+    const failedTestsList = testResults.failedTestsList;
+    const failed = failedTests > 0;
+    const failedTestsSections = getFailedTestsSections(failed, failedTestsList);
+    const overralTestsSection = getOverralTestsSection(passedTests, skippedTests, failedTests);
+    return `
   [
     {
         "type": "context",
         "elements": [
             {
                 "type": "plain_text",
-                "text": "Action: ${actionInfo.workflowName}",
+                "text": "Workflow: ${actionInfo.workflowName} :: Step: ${actionInfo.stepId}",
                 "emoji": true
             }
         ]
@@ -20213,16 +20217,25 @@ class SlackMessage {
     }
 ]
   `;
-    }
-    getUnknownBlocks(actionInfo) {
-        return `
+}
+
+;// CONCATENATED MODULE: ./app/slack-message-no-results.ts
+function noResultsSlackMessage(actionInfo, title, text) {
+    const noResultBlocks = slack_message_no_results_getBlocks(actionInfo, title, text);
+    return {
+        text: `${actionInfo.workflowName} - ${title}`,
+        blocks: JSON.parse(noResultBlocks)
+    };
+}
+function slack_message_no_results_getBlocks(actionInfo, title, text) {
+    return `
   [
     {
         "type": "context",
         "elements": [
             {
                 "type": "plain_text",
-                "text": "Action: ${actionInfo.workflowName}",
+                "text": "Workflow: ${actionInfo.workflowName} :: Step: ${actionInfo.stepId}",
                 "emoji": true
             }
         ]
@@ -20234,7 +20247,7 @@ class SlackMessage {
         "type": "section",
         "text": {
             "type": "mrkdwn",
-            "text": ":Question: *UNKNOWN RESULT:* No test result was found, check the Action for more info."
+            "text": ":Question: *${title}:* ${text}"
         }
     },
     {
@@ -20257,18 +20270,31 @@ class SlackMessage {
     }
 ]
   `;
-    }
 }
 
-// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
-var github = __nccwpck_require__(5438);
-;// CONCATENATED MODULE: ./app/action-info.ts
+;// CONCATENATED MODULE: ./app/slack-message.ts
 
-class ActionInfo {
-    constructor() {
-        this.workflowName = github.context.workflow;
-        this.runUrl = `${github.context.serverUrl}/${github.context.repo.owner}/${github.context.repo.repo}/actions/runs/${github.context.runId}`;
-        this.buildUrl = `${github.context.serverUrl}/${github.context.repo.owner}/${github.context.repo.repo}/runs/${github.context.runNumber}`;
+
+
+
+async function slackMessage(testStepOutcome, filePath) {
+    const actionInfo = new ActionInfo();
+    switch (testStepOutcome) {
+        case "success":
+        case "failure":
+            const result = new ResultsParser(filePath);
+            try {
+                await result.parse();
+                return withResultSlackMessage(actionInfo, result);
+            }
+            catch (e) {
+                return noResultsSlackMessage(actionInfo, 'NO TEST RESULT', 'No test result was found, check the Action for more info.');
+            }
+        case "cancelled":
+        case "skipped":
+            return noResultsSlackMessage(actionInfo, 'TEST NOT FINISHED', `The test was ${testStepOutcome}, check the Action for more info.`);
+        default:
+            return noResultsSlackMessage(actionInfo, 'UNKNOWN RESULT', 'Check the Action for more info.');
     }
 }
 
@@ -20277,20 +20303,16 @@ class ActionInfo {
 
 
 
-
 main_default().config();
+let testStepOutcome = core.getInput("test-step-outcome");
 let slackWebhookUrl = core.getInput("slack-webhook-url") ? core.getInput("slack-webhook-url") : process.env.SLACK_WEBHOOK_URL;
 let testOutputFile = core.getInput("directory-path") ? core.getInput("directory-path") : process.env.TEST_OUTPUT_FILE;
 (async () => {
     const workspacePath = process.env.GITHUB_WORKSPACE;
-    const result = new ResultsParser(workspacePath + '/' + testOutputFile);
-    try {
-        await result.parse();
-        await new SlackMessage(result).send(slackWebhookUrl, new ActionInfo());
-    }
-    catch (e) {
-        await new SlackMessage(result).sendUnknownResult(slackWebhookUrl, new ActionInfo());
-    }
+    const filePath = workspacePath + '/' + testOutputFile;
+    const message = await slackMessage(testStepOutcome, filePath);
+    const webhook = new dist/* IncomingWebhook */.QU(slackWebhookUrl);
+    await webhook.send(message);
 })();
 
 })();
