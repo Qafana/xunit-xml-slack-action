@@ -4,6 +4,9 @@ branding:
     icon: "bell"
     color: "green"
 inputs:
+  test-step-outcome:
+    description: 'Outcome of the test step to be reported on. Can be found in the github steps context. Possible values are success, failure, cancelled, or skipped.'
+    required: true
   slack-webhook-url: 
     description: 'Webhook URL for Slack'
     required: true
