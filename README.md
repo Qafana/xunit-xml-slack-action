@@ -12,7 +12,7 @@ https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action
 
 1. `npm i -g @vercel/ncc` if you didn't already do that
 2. `ncc build index.ts --license LICENSE` or `npm run build`
-3. commit, push, tag 
+3. commit, push, tag
 
 ## Usage
 
@@ -24,18 +24,19 @@ In the workflow yaml, add a step like this:
       - name: My test step
         id: my-test-step
         ...
-        
+
       - name: My reporting step
         id: my-test-report
         if: always()
-        uses: empear-analytics/xunit-xml-slack-action@v2
+        uses: Qafana/xunit-xml-slack-action
         with:
           test-step-outcome: ${{ steps.my-test-step.outcome }}
           slack-webhook-url: ${{ secrets.MY_SLACK_WEBHOOK_URL }}
           directory-path: test/results.xml
 ```
+
 - The test step needs an **id** so its outcome can be used in `test-step-outcome`.
-- The reporting step should have an **id**, this will then show up in the report. See the examples below: only the last report (UNKNOWN RESULT) has no id for the reporting step. 
+- The reporting step should have an **id**, this will then show up in the report. See the examples below: only the last report (UNKNOWN RESULT) has no id for the reporting step.
 - Using `if: always()` for the reporting step is necessary, otherwise it will only report on successful tests.
 
 ## Examples
@@ -47,6 +48,3 @@ In the workflow yaml, add a step like this:
 ### Different types of no-result reports
 
 <img src="img_1.png" alt="drawing" style="width:400px;"/>
-
-
-
