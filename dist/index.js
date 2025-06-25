@@ -46334,11 +46334,13 @@ var github = __nccwpck_require__(5438);
 ;// CONCATENATED MODULE: ./app/action-info.ts
 
 class ActionInfo {
-    constructor() {
+    constructor(additionalActionName, additionalActionUrl) {
         this.workflowName = github.context.workflow;
         this.stepId = github.context.action;
         this.runUrl = `${github.context.serverUrl}/${github.context.repo.owner}/${github.context.repo.repo}/actions/runs/${github.context.runId}`;
         this.buildUrl = `${github.context.serverUrl}/${github.context.repo.owner}/${github.context.repo.repo}/runs/${github.context.runNumber}`;
+        this.additionalActionName = additionalActionName;
+        this.additionalActionUrl = additionalActionUrl;
     }
 }
 
@@ -46467,7 +46469,7 @@ function withResultSlackMessage(actionInfo, testResults) {
     const resultBlocks = getBlocks(testResults, actionInfo);
     return {
         text: `${actionInfo.workflowName} - ${testResults.failedTests > 0 ? "Failed" : "Passed"}`,
-        blocks: JSON.parse(resultBlocks)
+        blocks: JSON.parse(resultBlocks),
     };
 }
 function getFailedTestsSections(failed, failedTestsList) {
@@ -46482,7 +46484,9 @@ function getFailedTestsSections(failed, failedTestsList) {
         return template("", false);
     }
     else {
-        return failedTestsList.map(testName => template(testName, true)).join("\n");
+        return failedTestsList
+            .map((testName) => template(testName, true))
+            .join("\n");
     }
 }
 function getOverralTestsSection(passedTests, skippedTests, failedTests) {
@@ -46548,6 +46552,16 @@ function getBlocks(testResults, actionInfo) {
                 },
                 "value": "action_go",
                 "url": "${actionInfo.runUrl}"
+            },
+            {
+                "type": "button",
+                "text": {
+                    "type": "plain_text",
+                    "text": "${actionInfo.additionalActionName}",
+                    "emoji": true
+                },
+                "value": "action_go",
+                "url": "${actionInfo.additionalActionUrl}"
             }
         ]
     }
@@ -46613,8 +46627,8 @@ function slack_message_no_results_getBlocks(actionInfo, title, text) {
 
 
 
-async function slackMessage(testStepOutcome, filePath) {
-    const actionInfo = new ActionInfo();
+async function slackMessage(testStepOutcome, filePath, additionalActionName, additionalActionUrl) {
+    const actionInfo = new ActionInfo(additionalActionName, additionalActionUrl);
     switch (testStepOutcome) {
         case "success":
         case "failure":
@@ -46641,12 +46655,14 @@ async function slackMessage(testStepOutcome, filePath) {
 
 main_default().config();
 let testStepOutcome = core.getInput("test-step-outcome");
+let additionalActionName = core.getInput("additional-action-name");
+let additionalActionUrl = core.getInput("additional-action-url");
 let slackWebhookUrl = core.getInput("slack-webhook-url") ? core.getInput("slack-webhook-url") : process.env.SLACK_WEBHOOK_URL;
 let testOutputFile = core.getInput("directory-path") ? core.getInput("directory-path") : process.env.TEST_OUTPUT_FILE;
 (async () => {
     const workspacePath = process.env.GITHUB_WORKSPACE;
     const filePath = workspacePath + '/' + testOutputFile;
-    const message = await slackMessage(testStepOutcome, filePath);
+    const message = await slackMessage(testStepOutcome, filePath, additionalActionName, additionalActionUrl);
     const webhook = new dist/* IncomingWebhook */.QU(slackWebhookUrl);
     await webhook.send(message);
 })();
