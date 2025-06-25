@@ -6,6 +6,8 @@ import slackMessage from "./app/slack-message.js";
 
 dotenv.config();
 let testStepOutcome = core.getInput("test-step-outcome");
+let additionalActionName = core.getInput("additional-action-name");
+let additionalActionUrl = core.getInput("additional-action-url");
 let slackWebhookUrl = core.getInput("slack-webhook-url") ? core.getInput("slack-webhook-url") : process.env.SLACK_WEBHOOK_URL;
 let testOutputFile = core.getInput("directory-path") ? core.getInput("directory-path") : process.env.TEST_OUTPUT_FILE;
 
@@ -13,7 +15,7 @@ let testOutputFile = core.getInput("directory-path") ? core.getInput("directory-
 (async () => {
   const workspacePath = process.env.GITHUB_WORKSPACE;
   const filePath = workspacePath + '/' + testOutputFile
-  const message = await slackMessage(testStepOutcome, filePath);
+  const message = await slackMessage(testStepOutcome, filePath, additionalActionName, additionalActionUrl);
   const webhook = new IncomingWebhook(slackWebhookUrl);
   await webhook.send(message);
 })();

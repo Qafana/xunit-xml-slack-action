@@ -1,35 +1,49 @@
-import ActionInfo from './action-info';
-import ResultsParser from './results-parser';
+import ActionInfo from "./action-info";
+import ResultsParser from "./results-parser";
 
-
-export default function withResultSlackMessage(actionInfo: ActionInfo, testResults: ResultsParser): object {
+export default function withResultSlackMessage(
+  actionInfo: ActionInfo,
+  testResults: ResultsParser
+): object {
   const resultBlocks = getBlocks(testResults, actionInfo);
   return {
-    text: `${actionInfo.workflowName} - ${testResults.failedTests > 0 ? "Failed" : "Passed"}`,
-    blocks: JSON.parse(resultBlocks)
-  }
+    text: `${actionInfo.workflowName} - ${
+      testResults.failedTests > 0 ? "Failed" : "Passed"
+    }`,
+    blocks: JSON.parse(resultBlocks),
+  };
 }
-
 
 function getFailedTestsSections(failed, failedTestsList: string[]): string {
   const template = (testName: string, isFailed: boolean) => `{
         "type": "section",
         "text": {
             "type": "mrkdwn",
-            "text": "${isFailed ? ":red_circle: " + testName : ":tada: *ALL PASSED*"} "
+            "text": "${
+              isFailed ? ":red_circle: " + testName : ":tada: *ALL PASSED*"
+            } "
         }
     },`;
   if (!failed) {
     return template("", false);
   } else {
-    return failedTestsList.map(testName => template(testName, true)).join("\n");
+    return failedTestsList
+      .map((testName) => template(testName, true))
+      .join("\n");
   }
 }
 
-function getOverralTestsSection(passedTests, skippedTests, failedTests): string {
-  const passedSubstring = passedTests > 0 ? `:large_green_circle: *PASSED: ${passedTests}*` : "";
-  const failedSubstring = failedTests > 0 ? `:red_circle: *FAILED: ${failedTests}*` : "";
-  const skippedSubstring = skippedTests > 0 ? `:white_circle: *SKIPPED: ${skippedTests}*` : "";
+function getOverralTestsSection(
+  passedTests,
+  skippedTests,
+  failedTests
+): string {
+  const passedSubstring =
+    passedTests > 0 ? `:large_green_circle: *PASSED: ${passedTests}*` : "";
+  const failedSubstring =
+    failedTests > 0 ? `:red_circle: *FAILED: ${failedTests}*` : "";
+  const skippedSubstring =
+    skippedTests > 0 ? `:white_circle: *SKIPPED: ${skippedTests}*` : "";
   const template = (passedTests, skippedTests, failedTests) => `{
         "type": "section",
         "text": {
@@ -40,7 +54,6 @@ function getOverralTestsSection(passedTests, skippedTests, failedTests): string 
   return template(passedTests, skippedTests, failedTests);
 }
 
-
 function getBlocks(testResults: ResultsParser, actionInfo: ActionInfo): string {
   const failedTests = testResults.failedTests;
   const skippedTests = testResults.skippedTests;
@@ -48,7 +61,11 @@ function getBlocks(testResults: ResultsParser, actionInfo: ActionInfo): string {
   const failedTestsList = testResults.failedTestsList;
   const failed = failedTests > 0;
   const failedTestsSections = getFailedTestsSections(failed, failedTestsList);
-  const overralTestsSection = getOverralTestsSection(passedTests, skippedTests, failedTests);
+  const overralTestsSection = getOverralTestsSection(
+    passedTests,
+    skippedTests,
+    failedTests
+  );
   return `
   [
     {
@@ -91,6 +108,16 @@ function getBlocks(testResults: ResultsParser, actionInfo: ActionInfo): string {
                 },
                 "value": "action_go",
                 "url": "${actionInfo.runUrl}"
+            },
+            {
+                "type": "button",
+                "text": {
+                    "type": "plain_text",
+                    "text": "${actionInfo.additionalActionName}",
+                    "emoji": true
+                },
+                "value": "action_go",
+                "url": "${actionInfo.additionalActionUrl}"
             }
         ]
     }

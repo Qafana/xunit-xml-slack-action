@@ -1,18 +1,24 @@
-name: 'xUnit XML to Slack'
-description: 'Send xUnit-like xml report to Slack'
+name: "xUnit XML to Slack"
+description: "Send xUnit-like xml report to Slack"
 branding:
-    icon: "bell"
-    color: "green"
+  icon: "bell"
+  color: "green"
 inputs:
   test-step-outcome:
-    description: 'Outcome of the test step to be reported on. Can be found in the github steps context. Possible values are success, failure, cancelled, or skipped.'
+    description: "Outcome of the test step to be reported on. Can be found in the github steps context. Possible values are success, failure, cancelled, or skipped."
     required: true
-  slack-webhook-url: 
-    description: 'Webhook URL for Slack'
+  slack-webhook-url:
+    description: "Webhook URL for Slack"
     required: true
   directory-path:
-    description: 'Directory path to JUnit XML file'
+    description: "Directory path to JUnit XML file"
     required: true
+  additional-action-name:
+    description: "Name of the additional action to be reported on. Can be found in the github steps context. Possible values are success, failure, cancelled, or skipped."
+    required: false
+  additional-action-url:
+    description: "URL of the additional action to be reported on. Can be found in the github steps context. Possible values are success, failure, cancelled, or skipped."
+    required: false
 runs:
-  using: 'node20'
-  main: 'dist/index.js'
+  using: "node20"
+  main: "dist/index.js"

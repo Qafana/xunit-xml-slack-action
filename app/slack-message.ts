@@ -4,8 +4,8 @@ import withResultSlackMessage from "./slack-message-with-results";
 import noResultsSlackMessage from "./slack-message-no-results";
 
 
-export default async function slackMessage(testStepOutcome: string, filePath: string) {
-  const actionInfo: ActionInfo = new ActionInfo();
+export default async function slackMessage(testStepOutcome: string, filePath: string, additionalActionName: string, additionalActionUrl: string) {
+  const actionInfo: ActionInfo = new ActionInfo(additionalActionName, additionalActionUrl);
   switch (testStepOutcome) {
     case "success":
     case "failure":
