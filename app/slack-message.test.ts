@@ -5,7 +5,7 @@ jest.mock("./action-info");
 test("message object created for success step", async () => {
   const message = await slackMessage(
     "success",
-    "./app/results-all-ok.xml",
+    `${__dirname}/results-all-ok.xml`,
     "Test Action",
     "https://example.com"
   );

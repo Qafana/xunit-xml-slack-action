@@ -46629,6 +46629,7 @@ function slack_message_no_results_getBlocks(actionInfo, title, text) {
 
 async function slackMessage(testStepOutcome, filePath, additionalActionName, additionalActionUrl) {
     const actionInfo = new ActionInfo(additionalActionName, additionalActionUrl);
+    console.log(actionInfo.additionalActionUrl);
     switch (testStepOutcome) {
         case "success":
         case "failure":
@@ -46638,13 +46639,14 @@ async function slackMessage(testStepOutcome, filePath, additionalActionName, add
                 return withResultSlackMessage(actionInfo, result);
             }
             catch (e) {
-                return noResultsSlackMessage(actionInfo, 'NO TEST RESULT', 'No test result was found, check the Action for more info.');
+                console.error(`Error parsing results: ${e}`);
+                return noResultsSlackMessage(actionInfo, "NO TEST RESULT", "No test result was found, check the Action for more info.");
             }
         case "cancelled":
         case "skipped":
-            return noResultsSlackMessage(actionInfo, 'TEST NOT FINISHED', `The test was ${testStepOutcome}, check the Action for more info.`);
+            return noResultsSlackMessage(actionInfo, "TEST NOT FINISHED", `The test was ${testStepOutcome}, check the Action for more info.`);
         default:
-            return noResultsSlackMessage(actionInfo, 'UNKNOWN RESULT', 'Check the Action for more info.');
+            return noResultsSlackMessage(actionInfo, "UNKNOWN RESULT", "Check the Action for more info.");
     }
 }
 

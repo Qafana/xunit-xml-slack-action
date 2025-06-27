@@ -3,9 +3,17 @@ import ResultsParser from "./results-parser";
 import withResultSlackMessage from "./slack-message-with-results";
 import noResultsSlackMessage from "./slack-message-no-results";
 
-
-export default async function slackMessage(testStepOutcome: string, filePath: string, additionalActionName: string, additionalActionUrl: string) {
-  const actionInfo: ActionInfo = new ActionInfo(additionalActionName, additionalActionUrl);
+export default async function slackMessage(
+  testStepOutcome: string,
+  filePath: string,
+  additionalActionName: string,
+  additionalActionUrl: string
+) {
+  const actionInfo: ActionInfo = new ActionInfo(
+    additionalActionName,
+    additionalActionUrl
+  );
+  console.log(actionInfo.additionalActionUrl);
   switch (testStepOutcome) {
     case "success":
     case "failure":
@@ -14,20 +22,27 @@ export default async function slackMessage(testStepOutcome: string, filePath: st
         await result.parse();
         return withResultSlackMessage(actionInfo, result);
       } catch (e) {
-        return noResultsSlackMessage(actionInfo,
-          'NO TEST RESULT',
-          'No test result was found, check the Action for more info.');
+        console.error(`Error parsing results: ${e}`);
+        return noResultsSlackMessage(
+          actionInfo,
+          "NO TEST RESULT",
+          "No test result was found, check the Action for more info."
+        );
       }
 
     case "cancelled":
     case "skipped":
-      return noResultsSlackMessage(actionInfo,
-        'TEST NOT FINISHED',
-        `The test was ${testStepOutcome}, check the Action for more info.`);
+      return noResultsSlackMessage(
+        actionInfo,
+        "TEST NOT FINISHED",
+        `The test was ${testStepOutcome}, check the Action for more info.`
+      );
 
     default:
-      return noResultsSlackMessage(actionInfo,
-        'UNKNOWN RESULT',
-        'Check the Action for more info.');
+      return noResultsSlackMessage(
+        actionInfo,
+        "UNKNOWN RESULT",
+        "Check the Action for more info."
+      );
   }
 }
